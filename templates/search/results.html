@@ -1,0 +1,32 @@
+{% extends "search/base.html" %}
+
+{% block header %}
+        <h2>Search Restaurants in Bangalore</h2>
+{% endblock %}
+
+{% block content %}
+	{% include "search/search_header.html" %}
+	{% if not request.GET %}
+		<h2>Showing all restaurants</h2>
+	{% else %}
+		<h2>Showing results for "{{request.GET.q}}"</h2>
+	{% endif %}
+	<div class="row">
+		{% for result in search_results %}
+			<div class="col-3">
+				<div class="card h-100" style="border:none">
+					<a href="{% url 'search:restaurant-detail' pk=result.local_rest_id %}"><img src="{{result.thumb}}" class="card-img-top" alt="{{result.name}}"></a>
+					<div class="card-body" style="padding-left: 0;padding-right: 0">
+						<h5 class="card-title">{{result.name}}</h5>
+						<p class="card-text">
+							<b>Cost for two:</b> {{result.avg_cost_for_two}}<br>
+							<b>Cuisines:</b> {{result.cuisines}}<br>
+							<b>Rating:</b> {{result.user_rating.aggregate_rating}} / 5 ({{result.user_rating.votes}} Votes)<br>
+							<a href="{{result.url}}">View Restaurant on Zomato</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}

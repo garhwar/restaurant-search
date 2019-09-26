@@ -1,0 +1,36 @@
+{% extends "search/base.html" %}
+
+{% block content %}
+	<div class="card" style="border:none; width: 220px;">
+		<img src="{{restaurant.thumb}}" class="card-img-top" alt="{{restaurant.name}}">
+		<div class="card-body" style="padding-left: 0;padding-right: 0">
+			<h5 class="card-title">{{restaurant.name}}</h5>
+			<p class="card-text">
+				<b>Cost for two:</b> {{restaurant.avg_cost_for_two}}<br>
+				<b>Cuisines:</b> {{restaurant.cuisines}}<br>
+				<b>Zomato Rating:</b> {{restaurant.user_rating.aggregate_rating}} / 5 ({{restaurant.user_rating.votes}} Votes)<br>
+				<a href="{{restaurant.url}}">View Restaurant on Zomato</a>
+			</p>
+		</div>
+	</div>
+	<hr>
+	<h3>REVIEWS</h3>
+	{% if request.user.id not in reviewers %}
+		You have not rated this restaurant.
+		<a href="{% url 'search:review-create' res_id=restaurant.id %}" class="btn btn-primary btn-sm" role="button">Write Review</a>
+	{% endif %}
+	<hr>
+	{% if reviews %}
+		{% for review in reviews %}
+			<b>{{review.user.username}}</b>
+			{% if request.user == review.user %}
+				<a href="{% url 'search:review-update' res_id=restaurant.id pk=review.id %}" class="btn btn-primary btn-sm" role="button">Edit Review</a>
+			{% endif %} <br>
+			{{review.rating}}/5 <br>
+			{{review.description}}
+			<hr>
+		{% endfor %}
+	{% else %}
+		There are no reviews for this restaurant.
+	{% endif %}
+{% endblock %}
